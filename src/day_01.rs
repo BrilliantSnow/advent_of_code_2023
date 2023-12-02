@@ -29,7 +29,7 @@ pub fn part_one(input_dir: &str) -> i64 {
         .sum()
 }
 
-pub fn find_first_digit(input: &str) -> u32 {
+pub fn find_first_and_last_digits(input: &str) -> u32 {
     let written_digits = [
         ("one", "1"),
         ("two", "2"),
@@ -45,55 +45,34 @@ pub fn find_first_digit(input: &str) -> u32 {
     let written_digit_map = HashMap::from(written_digits);
 
     let re = Regex::new(r"(one|two|three|four|five|six|seven|eight|nine|\d)").unwrap();
-    if let Some(first) = re.find(input) {
-        // println!("Input:\n{}\n{}", input, first.as_str());
-        if let Some(replaced) = written_digit_map.get(first.as_str()) {
-            return replaced.parse().expect("it is a digit");
-        } else {
-            return first.as_str().parse().expect("it is a digit");
-        }
-    }
-    panic!("No digits found in input string");
-}
-
-pub fn find_last_digit(input: &str) -> u32 {
-    let written_digits = [
-        ("one", "1"),
-        ("two", "2"),
-        ("three", "3"),
-        ("four", "4"),
-        ("five", "5"),
-        ("six", "6"),
-        ("seven", "7"),
-        ("eight", "8"),
-        ("nine", "9"),
-    ];
-
-    let written_digit_map = HashMap::from(written_digits);
+    let first_match = re.find(input).expect("There to be a match");
+    let first_digit = if let Some(digit_version) = written_digit_map.get(first_match.as_str()) {
+        // first capture was a spelled digit
+        digit_version
+    } else {
+        // first capture is already a digit
+        first_match.as_str()
+    };
 
     let re = Regex::new(r".*(one|two|three|four|five|six|seven|eight|nine|\d)").unwrap();
     let (_line, captures) = re.captures(input).unwrap().extract::<1>();
     let first_capture = captures[0];
-    // println!("Input:\n{}\n{}", input, first_capture);
-    if let Some(first_digit) = written_digit_map.get(first_capture) {
-        // first capture was a written out digit
-        return first_digit.parse().expect("it is a digit");
+    let second_digit = if let Some(digit_version) = written_digit_map.get(first_capture) {
+        // first capture was a spelled digit
+        digit_version
     } else {
-        // first capture is a digit
-        return first_capture.parse().expect("it is a digit");
-    }
+        // first capture is already a digit
+        first_capture
+    };
+
+    return format!("{}{}", first_digit, second_digit).parse().expect("To be a number");
 }
 
-pub fn part_two(input_dir: &str) -> i64 {
+pub fn part_two(input_dir: &str) -> u32 {
     input_util::read_file(&input_dir)
         .map(|line_read| {
             let line = line_read.expect("The input file is parsable");
-            // get first digit
-            let first = find_first_digit(&line);
-            // get last digit
-            let last = find_last_digit(&line);
-            // product of first and last digits
-            return first as i64 * 10 + last as i64;
+            return find_first_and_last_digits(&line);
         })
         .sum()
 }
