@@ -1,4 +1,4 @@
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 mod day_01;
 mod day_02;
@@ -23,14 +23,21 @@ fn run_day(day: usize) {
             println!("Day Two");
             let input = "src/res/day_02.txt";
 
-            let now = Instant::now();
+            let run_times: Vec<Duration> = (0..10000)
+                .map(|_| {
+                    let now = Instant::now();
+                    day_02::part_one(input);
+                    return now.elapsed();
+                })
+                .collect();
 
-            let output = day_02::part_one(input);
+            let best_time = run_times.iter().min().unwrap();
 
-            let elapsed = now.elapsed();
-            println!("Elapsed: {:.2?}", elapsed);
+            let answer = day_02::part_one(input);
+            println!("P1: {}", answer);
+            println!("P1 duration {:.2?}", best_time);
 
-            println!("\t1: {}", output);
+            // println!("\t1: {}", output);
 
             let output = day_02::part_two(input);
             println!("\t2: {}", output);

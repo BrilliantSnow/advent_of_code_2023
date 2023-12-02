@@ -7,7 +7,7 @@ pub fn part_one(input_dir: &str) -> i64 {
     let first_digit = |x: &char| x.is_digit(10);
     let to_digit = |x: char| x.to_digit(10).expect("Already checked if it was a digit");
 
-    input_util::read_file(&input_dir)
+    input_util::read_file_buffered(&input_dir)
         .map(|line_read| {
             let line = line_read.expect("The input file is parsable");
             let line_characters = line.chars();
@@ -69,7 +69,7 @@ pub fn find_first_and_last_digits(input: &str) -> u32 {
 }
 
 pub fn part_two(input_dir: &str) -> u32 {
-    input_util::read_file(&input_dir)
+    input_util::read_file_buffered(&input_dir)
         .map(|line_read| {
             let line = line_read.expect("The input file is parsable");
             return find_first_and_last_digits(&line);
