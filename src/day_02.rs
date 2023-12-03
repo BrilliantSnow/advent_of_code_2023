@@ -2,15 +2,15 @@ use std::collections::HashMap;
 
 use crate::input_util;
 
-pub fn part_one(input_dir: &str) -> usize {
+pub fn part_one(input_dir: &str) -> i64 {
     let colors = [("red", 12), ("green", 13), ("blue", 14)];
 
     let color_map = HashMap::from(colors);
 
     input_util::read_file_buffered(&input_dir)
         .flatten()
-        .enumerate()
-        .filter(|(_, line)| {
+        .zip(1..=100)
+        .filter(|(line, _)| {
             line.split_once(": ")
                 .unwrap()
                 .1
@@ -23,7 +23,7 @@ pub fn part_one(input_dir: &str) -> usize {
                     })
                 })
         })
-        .map(|(index, _)| index + 1)
+        .map(|(_, index)| index)
         .sum()
 }
 
