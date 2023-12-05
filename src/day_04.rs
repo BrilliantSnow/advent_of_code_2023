@@ -62,15 +62,13 @@ impl Solution for Day04 {
             });
         // keep track of how many tickets each ticket is responsible for multiplying
         let mut ticket_multipliers = [1; TOTAL];
-        (0..TOTAL)
+        free_ticket_lookup
+            .into_iter()
+            .enumerate()
             .rev()
-            .map(|x| {
-                ticket_multipliers[x] = ticket_multipliers[free_ticket_lookup[x].clone()]
-                    .iter()
-                    .sum::<i64>()
-                    * ticket_multipliers[x];
-                ticket_multipliers[x]
-            })
-            .sum()
+            .for_each(|(index, tickets)| {
+                ticket_multipliers[index] *= ticket_multipliers[tickets].iter().sum::<i64>()
+            });
+        ticket_multipliers.iter().sum()
     }
 }
