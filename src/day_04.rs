@@ -37,8 +37,8 @@ impl Solution for Day04 {
         // list of what tickets each ticket gets copies of
         let free_ticket_lookup: [Range<usize>; TOTAL] = input_util::read_file_buffered(file_path)
             .flatten()
-            .zip(0..TOTAL)
-            .map(|(line, num)| {
+            .enumerate()
+            .map(|(num, line)| {
                 let numbers = line.split_once(": ").unwrap().1.split_once(" | ").unwrap();
                 let convert_to_numbers = |string_of_numbers: &str| {
                     string_of_numbers
