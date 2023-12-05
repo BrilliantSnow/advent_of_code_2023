@@ -1,8 +1,10 @@
-use std::{collections::HashMap, ops::Range};
+use std::ops::Range;
 
 use crate::{benchmark_util::Solution, input_util};
 
 pub struct Day04;
+
+const TOTAL: usize = 213;
 
 impl Solution for Day04 {
     fn part_one(&self, file_path: &str) -> i64 {
@@ -33,12 +35,12 @@ impl Solution for Day04 {
     }
 
     fn part_two(&self, file_path: &str) -> i64 {
-        const TOTAL: usize = 213;
-        // list of what tickets each ticket gets copies of
-        let free_ticket_lookup: [Range<usize>; TOTAL] = input_util::read_file_buffered(file_path)
+        // keep track of how many tickets each ticket is responsible for multiplying
+        let mut ticket_multipliers = [1; TOTAL];
+        input_util::read_file_buffered(file_path)
             .flatten()
             .enumerate()
-            .map(|(num, line)| {
+            .map(|(index, line)| {
                 let numbers = line.split_once(": ").unwrap().1.split_once(" | ").unwrap();
                 let convert_to_numbers = |string_of_numbers: &str| {
                     string_of_numbers
@@ -53,22 +55,15 @@ impl Solution for Day04 {
                     .iter()
                     .filter(|mine| winning_numbers.contains(mine))
                     .count();
-                (num..(num + count + 1).min(TOTAL), num)
+                (index, index..(index + count + 1).min(TOTAL))
             })
-            // collect iterator into array
-            .fold(std::array::from_fn(|_| 0..0), |mut arr, (range, num)| {
-                arr[num] = range;
-                arr
-            });
-        // keep track of how many tickets each ticket is responsible for multiplying
-        let mut ticket_multipliers = [1; TOTAL];
-        free_ticket_lookup
+            .collect::<Vec<(usize, Range<usize>)>>()
             .into_iter()
-            .enumerate()
             .rev()
-            .for_each(|(index, tickets)| {
-                ticket_multipliers[index] *= ticket_multipliers[tickets].iter().sum::<i64>()
-            });
-        ticket_multipliers.iter().sum()
+            .map(|(index, tickets)| {
+                ticket_multipliers[index] *= ticket_multipliers[tickets].iter().sum::<i64>();
+                ticket_multipliers[index]
+            })
+            .sum()
     }
 }
