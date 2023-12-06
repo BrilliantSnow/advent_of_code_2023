@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::{input_util, day_01::Day01, day_02::Day02, day_03::Day03, day_04::Day04};
+use crate::{input_util, day_01::Day01, day_02::Day02, day_03::Day03, day_04::Day04, day_05::Day05, day_06::Day06};
 
 pub fn run_benchmark(day_number: usize, iterations: usize) {
     let file_path = input_util::get_file_path(day_number);
@@ -12,8 +12,33 @@ pub fn run_benchmark(day_number: usize, iterations: usize) {
         2 => benchmark(Day02{}, &file_path, iterations),
         3 => benchmark(Day03{}, &file_path, iterations),
         4 => benchmark(Day04{}, &file_path, iterations),
+        5 => benchmark(Day05{}, &file_path, iterations),
+        6 => benchmark(Day06{}, &file_path, iterations),
         _ => todo!(),
     }
+}
+
+pub fn run_day(day_number: usize) {
+    let file_path = input_util::get_file_path(day_number);
+    match day_number {
+        1 => run(Day01{}, &file_path),
+        2 => run(Day02{}, &file_path),
+        3 => run(Day03{}, &file_path),
+        4 => run(Day04{}, &file_path),
+        5 => run(Day05{}, &file_path),
+        6 => run(Day06{}, &file_path),
+        _ => todo!(),
+    }
+}
+
+fn run<S: Solution>(day_solution: S, file_path: &str) {
+    let answer = day_solution.part_one(file_path);
+
+    println!("P1: {}", answer);
+
+    let answer = day_solution.part_two(file_path);
+
+    println!("P2: {}", answer);
 }
 
 fn benchmark<S: Solution>(day_solution: S, file_path: &str, iterations: usize) {
