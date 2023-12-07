@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::{input_util, day_01::Day01, day_02::Day02, day_03::Day03, day_04::Day04, day_05::Day05, day_06::Day06};
+use crate::{input_util, day_01::Day01, day_02::Day02, day_03::Day03, day_04::Day04, day_05::Day05, day_06::Day06, day_07::Day07};
 
 pub fn run_benchmark(day_number: usize, iterations: usize) {
     let file_path = input_util::get_file_path(day_number);
@@ -27,6 +27,7 @@ pub fn run_day(day_number: usize) {
         4 => run(Day04{}, &file_path),
         5 => run(Day05{}, &file_path),
         6 => run(Day06{}, &file_path),
+        7 => run(Day07{}, &file_path),
         _ => todo!(),
     }
 }
