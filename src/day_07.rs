@@ -124,19 +124,14 @@ impl From<String> for PokerHand {
             }
         }
 
-        println!("Sorted letters: {:?}", letter_count);
-        if letter_count.len() == 1 {
-            return PokerHand::FiveOfAKind(value);
-        }
-        let most_popular = (letter_count.get(0).unwrap(), letter_count.get(1).unwrap());
-        match most_popular {
-            ((_, 5), _) => PokerHand::FiveOfAKind(value),
-            ((_, 4), _) => PokerHand::FourOfAKind(value),
-            ((_, 3), (_, 2)) => PokerHand::FullHouse(value),
-            ((_, 3), _) => PokerHand::ThreeOfAKind(value),
-            ((_, 2), (_, 2)) => PokerHand::TwoPair(value),
-            ((_, 2), _) => PokerHand::OnePair(value),
-            ((_, 1), _) => PokerHand::HighCard(value),
+        match (letter_count.get(0).unwrap(), letter_count.get(1)) {
+            ((_, 5), None) => PokerHand::FiveOfAKind(value),
+            ((_, 4), Some(_)) => PokerHand::FourOfAKind(value),
+            ((_, 3), Some((_, 2))) => PokerHand::FullHouse(value),
+            ((_, 3), Some(_)) => PokerHand::ThreeOfAKind(value),
+            ((_, 2), Some((_, 2))) => PokerHand::TwoPair(value),
+            ((_, 2), Some(_)) => PokerHand::OnePair(value),
+            ((_, 1), Some(_)) => PokerHand::HighCard(value),
             _ => unreachable!("Hand has more than 5 cards??"),
         }
     }
