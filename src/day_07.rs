@@ -38,22 +38,59 @@ impl PokerHand {
             PokerHand::HighCard(inner) => inner,
         }
     }
-    
+
+    fn build_sort(rankings: [char; 13], left: &PokerHand, right: &PokerHand) -> Ordering {
+        let hand_compare = |left: &str, right: &str| {
+            if let Some(first_diff) = left
+                .chars()
+                .zip(right.chars())
+                .find(|(left, right)| left != right)
+            {
+                let first = rankings
+                    .iter()
+                    .enumerate()
+                    .find(|(_, x)| first_diff.0.eq(x))
+                    .unwrap()
+                    .0;
+                let second = rankings
+                    .iter()
+                    .enumerate()
+                    .find(|(_, x)| first_diff.1.eq(x))
+                    .unwrap()
+                    .0;
+                second.cmp(&first)
+            } else {
+                Ordering::Equal
+            }
+        };
+        if left.rank() > right.rank() {
+            Ordering::Greater
+        } else if left.rank() < right.rank() {
+            Ordering::Less
+        } else {
+            (hand_compare)(left.inner(), right.inner())
+        }
+    }
+
     fn parse_part_one(value: String) -> Self {
-        let mut letter_count: HashMap<char, i64> = value
-            .chars()
-            .into_iter()
-            .fold(HashMap::new(), |mut map, letter| {
-                if let Some(exists) = map.get_mut(&letter) {
-                    *exists += 1;
-                } else {
-                    map.insert(letter, 1);
-                }
-                map
-            });
-        
+        let letter_count: HashMap<char, i64> =
+            value
+                .chars()
+                .into_iter()
+                .fold(HashMap::new(), |mut map, letter| {
+                    if let Some(exists) = map.get_mut(&letter) {
+                        *exists += 1;
+                    } else {
+                        map.insert(letter, 1);
+                    }
+                    map
+                });
+
         // let jokers = letter_count.get(&'J').unwrap_or(&0);
-        let max = letter_count.values().max().expect("Letter count never has a length of zero.");
+        let max = letter_count
+            .values()
+            .max()
+            .expect("Letter count never has a length of zero.");
         let size = letter_count.len();
 
         match (max, size) {
@@ -69,45 +106,49 @@ impl PokerHand {
     }
 
     fn parse_part_two(value: String) -> Self {
-        let letter_count: HashMap<char, i64> = value
-            .chars()
-            .into_iter()
-            .fold(HashMap::new(), |mut map, letter| {
-                if let Some(exists) = map.get_mut(&letter) {
-                    *exists += 1;
-                } else {
-                    map.insert(letter, 1);
-                }
-                map
-            });
-        
+        let letter_count: HashMap<char, i64> =
+            value
+                .chars()
+                .into_iter()
+                .fold(HashMap::new(), |mut map, letter| {
+                    if let Some(exists) = map.get_mut(&letter) {
+                        *exists += 1;
+                    } else {
+                        map.insert(letter, 1);
+                    }
+                    map
+                });
+
         let jokers = letter_count.get(&'J').unwrap_or(&0);
-        let max = letter_count.values().max().expect("Letter count never has a length of zero.");
+        let max = letter_count
+            .values()
+            .max()
+            .expect("Letter count never has a length of zero.");
         let size = letter_count.len();
 
         match (max, size) {
             (5, _) => PokerHand::FiveOfAKind(value),
-            (4, 2) =>  {
+            (4, 2) => {
                 if 0.eq(jokers) {
                     PokerHand::FourOfAKind(value)
                 } else {
                     PokerHand::FiveOfAKind(value)
                 }
-            },
-            (3, 2) =>  {
+            }
+            (3, 2) => {
                 if 0.eq(jokers) {
                     PokerHand::FullHouse(value)
                 } else {
                     PokerHand::FiveOfAKind(value)
                 }
-            },
-            (3, 3) =>  {
+            }
+            (3, 3) => {
                 if 0.eq(jokers) {
                     PokerHand::ThreeOfAKind(value)
                 } else {
                     PokerHand::FourOfAKind(value)
                 }
-            },
+            }
             (2, 3) => {
                 if 0.eq(jokers) {
                     PokerHand::TwoPair(value)
@@ -116,57 +157,22 @@ impl PokerHand {
                 } else {
                     PokerHand::FourOfAKind(value)
                 }
-            },
+            }
             (2, 4) => {
                 if 0.eq(jokers) {
                     PokerHand::OnePair(value)
                 } else {
                     PokerHand::ThreeOfAKind(value)
                 }
-            },
+            }
             (1, 5) => {
                 if 0.eq(jokers) {
                     PokerHand::HighCard(value)
                 } else {
                     PokerHand::OnePair(value)
                 }
-            },
-            _ => unreachable!("Did not cover case: {}", value),
-        }
-    }
-}
-
-impl Ord for PokerHand {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        let hand_compare = |left: &str, right: &str| {
-            if let Some(first_diff) = left
-                .chars()
-                .zip(right.chars())
-                .find(|(left, right)| left != right)
-            {
-                let first = PART2CARDS
-                    .iter()
-                    .enumerate()
-                    .find(|(_, x)| first_diff.0.eq(x))
-                    .unwrap()
-                    .0;
-                let second = PART2CARDS
-                    .iter()
-                    .enumerate()
-                    .find(|(_, x)| first_diff.1.eq(x))
-                    .unwrap()
-                    .0;
-                second.cmp(&first)
-            } else {
-                Ordering::Equal
             }
-        };
-        if self.rank() > other.rank() {
-            Ordering::Greater
-        } else if self.rank() < other.rank() {
-            Ordering::Less
-        } else {
-            (hand_compare)(self.inner(), other.inner())
+            _ => unreachable!("Did not cover case: {}", value),
         }
     }
 }
@@ -190,7 +196,7 @@ impl Solution for Day07 {
             })
             .map(|(hand, bet)| (PokerHand::parse_part_one(hand), bet))
             .collect();
-        poker_hands.sort_by(|(hand, _), (hand2, _)| hand.cmp(hand2));
+        poker_hands.sort_by(|(left, _), (right, _)| PokerHand::build_sort(CARDS, left, right));
         poker_hands
             .iter()
             .enumerate()
@@ -208,7 +214,7 @@ impl Solution for Day07 {
             })
             .map(|(hand, bet)| (PokerHand::parse_part_two(hand), bet))
             .collect();
-        poker_hands.sort_by(|(hand, _), (hand2, _)| hand.cmp(hand2));
+        poker_hands.sort_by(|(left, _), (right, _)| PokerHand::build_sort(PART2CARDS, left, right));
         poker_hands
             .iter()
             .enumerate()
