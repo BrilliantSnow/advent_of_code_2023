@@ -11,15 +11,16 @@ mod day_05;
 mod day_06;
 mod day_07;
 mod day_08;
+mod day_09;
 mod input_util;
 
 fn main() {
     println!("Welcome to my advent of code 2023 adventure!");
-    let first = 8;
-    let last = 8;
+    let first = 1;
+    let last = 9;
     for day_number in first..=last {
         println!("======== Day {} =========", day_number);
-        // run_benchmark(day_number, );
+        run_benchmark(day_number, 100);
         run_day(day_number);
     }
 }
