@@ -4,7 +4,7 @@ use crate::{benchmark_util::Solution, input_util};
 
 pub struct Day07;
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, PartialOrd)]
 enum PokerHand {
     FiveOfAKind(String),
     FourOfAKind(String),
@@ -38,11 +38,101 @@ impl PokerHand {
             PokerHand::HighCard(inner) => inner,
         }
     }
-}
+    
+    fn parse_part_one(value: String) -> Self {
+        let mut letter_count: HashMap<char, i64> = value
+            .chars()
+            .into_iter()
+            .fold(HashMap::new(), |mut map, letter| {
+                if let Some(exists) = map.get_mut(&letter) {
+                    *exists += 1;
+                } else {
+                    map.insert(letter, 1);
+                }
+                map
+            });
+        
+        // let jokers = letter_count.get(&'J').unwrap_or(&0);
+        let max = letter_count.values().max().expect("Letter count never has a length of zero.");
+        let size = letter_count.len();
 
-impl PartialOrd for PokerHand {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        todo!()
+        match (max, size) {
+            (5, 1) => PokerHand::FiveOfAKind(value),
+            (4, 2) => PokerHand::FourOfAKind(value),
+            (3, 2) => PokerHand::FullHouse(value),
+            (3, 3) => PokerHand::ThreeOfAKind(value),
+            (2, 3) => PokerHand::TwoPair(value),
+            (2, 4) => PokerHand::OnePair(value),
+            (1, 5) => PokerHand::HighCard(value),
+            _ => unreachable!("All combinations of 5 cards should be covered"),
+        }
+    }
+
+    fn parse_part_two(value: String) -> Self {
+        let letter_count: HashMap<char, i64> = value
+            .chars()
+            .into_iter()
+            .fold(HashMap::new(), |mut map, letter| {
+                if let Some(exists) = map.get_mut(&letter) {
+                    *exists += 1;
+                } else {
+                    map.insert(letter, 1);
+                }
+                map
+            });
+        
+        let jokers = letter_count.get(&'J').unwrap_or(&0);
+        let max = letter_count.values().max().expect("Letter count never has a length of zero.");
+        let size = letter_count.len();
+
+        match (max, size) {
+            (5, _) => PokerHand::FiveOfAKind(value),
+            (4, 2) =>  {
+                if 0.eq(jokers) {
+                    PokerHand::FourOfAKind(value)
+                } else {
+                    PokerHand::FiveOfAKind(value)
+                }
+            },
+            (3, 2) =>  {
+                if 0.eq(jokers) {
+                    PokerHand::FullHouse(value)
+                } else {
+                    PokerHand::FiveOfAKind(value)
+                }
+            },
+            (3, 3) =>  {
+                if 0.eq(jokers) {
+                    PokerHand::ThreeOfAKind(value)
+                } else {
+                    PokerHand::FourOfAKind(value)
+                }
+            },
+            (2, 3) => {
+                if 0.eq(jokers) {
+                    PokerHand::TwoPair(value)
+                } else if 1.eq(jokers) {
+                    PokerHand::FullHouse(value)
+                } else {
+                    PokerHand::FourOfAKind(value)
+                }
+            },
+            (2, 4) => {
+                if 0.eq(jokers) {
+                    PokerHand::OnePair(value)
+                } else {
+                    PokerHand::ThreeOfAKind(value)
+                }
+            },
+            (1, 5) => {
+                if 0.eq(jokers) {
+                    PokerHand::HighCard(value)
+                } else {
+                    PokerHand::OnePair(value)
+                }
+            },
+            _ => unreachable!("Did not cover case: {}", value),
+        }
     }
 }
 
@@ -89,54 +179,6 @@ const PART2CARDS: [char; 13] = [
     'A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J',
 ];
 
-impl From<String> for PokerHand {
-    fn from(value: String) -> Self {
-        let mut letter_count: Vec<(char, i64)> = value
-            .chars()
-            .into_iter()
-            .fold(HashMap::new(), |mut map, letter| {
-                if let Some(exists) = map.get_mut(&letter) {
-                    *exists += 1;
-                } else {
-                    map.insert(letter, 1);
-                }
-                map
-            })
-            .into_iter()
-            .collect();
-        println!("Letter occurances: {:?}", letter_count);
-        letter_count.sort_by_key(|pair| pair.1);
-        letter_count.reverse();
-
-        let total_jokers = letter_count.iter().find(|x| x.0 == 'J').map(|x| x.1);
-        let most_common_non_joker = letter_count.iter_mut().find(|x| x.0 != 'J');
-        if let Some(total) = total_jokers {
-            if let Some(add_to) = most_common_non_joker {
-                add_to.1 += total;
-                letter_count.remove(
-                    letter_count
-                        .iter()
-                        .enumerate()
-                        .find(|x| x.1 .0 == 'J')
-                        .unwrap()
-                        .0,
-                );
-            }
-        }
-
-        match (letter_count.get(0).unwrap(), letter_count.get(1)) {
-            ((_, 5), None) => PokerHand::FiveOfAKind(value),
-            ((_, 4), Some(_)) => PokerHand::FourOfAKind(value),
-            ((_, 3), Some((_, 2))) => PokerHand::FullHouse(value),
-            ((_, 3), Some(_)) => PokerHand::ThreeOfAKind(value),
-            ((_, 2), Some((_, 2))) => PokerHand::TwoPair(value),
-            ((_, 2), Some(_)) => PokerHand::OnePair(value),
-            ((_, 1), Some(_)) => PokerHand::HighCard(value),
-            _ => unreachable!("Hand has more than 5 cards??"),
-        }
-    }
-}
-
 impl Solution for Day07 {
     fn part_one(&self, file_path: &str) -> i64 {
         let mut poker_hands: Vec<(PokerHand, i64)> = input_util::read_file_buffered(file_path)
@@ -146,7 +188,7 @@ impl Solution for Day07 {
                 let bet: i64 = bet.parse().unwrap();
                 (hand.to_owned(), bet)
             })
-            .map(|(hand, bet)| (PokerHand::from(hand), bet))
+            .map(|(hand, bet)| (PokerHand::parse_part_one(hand), bet))
             .collect();
         poker_hands.sort_by(|(hand, _), (hand2, _)| hand.cmp(hand2));
         poker_hands
@@ -164,7 +206,7 @@ impl Solution for Day07 {
                 let bet: i64 = bet.parse().unwrap();
                 (hand.to_owned(), bet)
             })
-            .map(|(hand, bet)| (PokerHand::from(hand), bet))
+            .map(|(hand, bet)| (PokerHand::parse_part_two(hand), bet))
             .collect();
         poker_hands.sort_by(|(hand, _), (hand2, _)| hand.cmp(hand2));
         poker_hands
