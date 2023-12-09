@@ -1,26 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use regex::Regex;
 
 use crate::{benchmark_util::Solution, input_util};
 
 pub struct Day08;
-
-fn gcd(a: i64, b: i64) -> i64 {
-    if b == 0 {
-        a.abs()
-    } else {
-        gcd(b, a % b)
-    }
-}
-
-fn lcm(a: i64, b: i64) -> i64 {
-    (a * b).abs() / gcd(a, b)
-}
-
-fn find_lcm(numbers: Vec<i64>) -> i64 {
-    numbers.iter().fold(1, |acc, &num| lcm(acc, num))
-}
 
 impl Solution for Day08 {
     fn part_one(&self, file_path: &str) -> i64 {
