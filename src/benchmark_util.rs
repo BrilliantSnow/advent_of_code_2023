@@ -5,7 +5,7 @@ use std::{
 
 use crate::{
     day_01::Day01, day_02::Day02, day_03::Day03, day_04::Day04, day_05::Day05, day_06::Day06,
-    day_07::Day07, day_08::Day08, day_09::Day09, input_util,
+    day_07::Day07, day_08::Day08, day_09::Day09, day_10::Day10, input_util,
 };
 
 pub fn run_benchmark(day_number: usize, iterations: usize) {
@@ -20,6 +20,7 @@ pub fn run_benchmark(day_number: usize, iterations: usize) {
         7 => benchmark(Day07 {}, &file_path, iterations),
         8 => benchmark(Day08 {}, &file_path, iterations),
         9 => benchmark(Day09 {}, &file_path, iterations),
+        10 => benchmark(Day10 {}, &file_path, iterations),
         _ => todo!(),
     }
 }
@@ -36,6 +37,7 @@ pub fn run_day(day_number: usize) {
         7 => run(Day07 {}, &file_path),
         8 => run(Day08 {}, &file_path),
         9 => run(Day09 {}, &file_path),
+        10 => run(Day10 {}, &file_path),
         _ => todo!(),
     }
 }
