@@ -33,18 +33,18 @@ impl PartNumber {
                 return true;
             }
         }
-        let first = level.get(0).unwrap();
+        let first = level.first().unwrap();
         let last = level.last().unwrap();
         if '.'.ne(first) && !first.is_numeric() || '.'.ne(last) && !last.is_numeric() {
             return true;
         }
         if let Some(lower) = below {
-            let lower = &lower[range.clone()];
+            let lower = &lower[range];
             if lower.chars().any(|letter| '.'.ne(&letter)) {
                 return true;
             }
         }
-        return false;
+        false
     }
 
     fn neighboring_gears(
@@ -83,8 +83,7 @@ impl PartNumber {
                 });
             }
         }
-        // println!("Returning this many gears: {}", gears.len());
-        return gears;
+        gears
     }
 }
 
@@ -98,7 +97,7 @@ impl Solution for Day03 {
             .iter()
             .enumerate()
             .flat_map(|(index, line)| {
-                number_pattern.find_iter(&line).map(move |find| PartNumber {
+                number_pattern.find_iter(line).map(move |find| PartNumber {
                     start: find.start(),
                     end: find.end(),
                     height: index,
@@ -125,7 +124,7 @@ impl Solution for Day03 {
             .iter()
             .enumerate()
             .flat_map(|(index, line)| {
-                number_pattern.find_iter(&line).map(move |find| PartNumber {
+                number_pattern.find_iter(line).map(move |find| PartNumber {
                     start: find.start(),
                     end: find.end(),
                     height: index,

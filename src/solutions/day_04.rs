@@ -15,7 +15,6 @@ impl Solution for Day04 {
                 let convert_to_numbers = |string_of_numbers: &str| {
                     string_of_numbers
                         .split_whitespace()
-                        .into_iter()
                         .map(|digits| digits.parse().unwrap())
                         .collect::<Vec<i64>>()
                 };
@@ -45,7 +44,6 @@ impl Solution for Day04 {
                 let convert_to_numbers = |string_of_numbers: &str| {
                     string_of_numbers
                         .split_whitespace()
-                        .into_iter()
                         .map(|digits| digits.parse().unwrap())
                         .collect::<Vec<i64>>()
                 };

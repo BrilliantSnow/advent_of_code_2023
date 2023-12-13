@@ -60,7 +60,7 @@ fn benchmark<S: Solution>(day_solution: S, file_path: &str, iterations: usize) {
         .map(|_| {
             let now = Instant::now();
             day_solution.part_one(file_path);
-            return now.elapsed();
+            now.elapsed()
         })
         .collect();
 
@@ -78,7 +78,7 @@ fn benchmark<S: Solution>(day_solution: S, file_path: &str, iterations: usize) {
         .map(|_| {
             let now = Instant::now();
             day_solution.part_two(file_path);
-            return now.elapsed();
+            now.elapsed()
         })
         .collect();
 

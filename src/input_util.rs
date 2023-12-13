@@ -14,5 +14,5 @@ pub fn get_file_path(day: usize) -> String {
 pub fn read_file_buffered(directory: &str) -> std::io::Lines<BufReader<File>> {
     let file = File::open(directory).unwrap();
     let reader = BufReader::new(file);
-    return reader.lines();
+    reader.lines()
 }

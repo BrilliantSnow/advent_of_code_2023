@@ -13,7 +13,7 @@ fn main() {
     let last = 10;
     for day_number in first..=last {
         println!("======== Day {} =========", day_number);
-        // run_benchmark(day_number, 100);
+        run_benchmark(day_number, 100);
         run_day(day_number);
     }
 }

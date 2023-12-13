@@ -63,28 +63,23 @@ impl PokerHand {
                 Ordering::Equal
             }
         };
-        if left.rank() > right.rank() {
-            Ordering::Greater
-        } else if left.rank() < right.rank() {
-            Ordering::Less
-        } else {
-            (hand_compare)(left.inner(), right.inner())
+        match left.rank().cmp(&right.rank()) {
+            Ordering::Less => Ordering::Less,
+            Ordering::Greater => Ordering::Greater,
+            Ordering::Equal => (hand_compare)(left.inner(), right.inner()),
         }
     }
 
     fn parse_part_one(value: String) -> Self {
         let letter_count: HashMap<char, i64> =
-            value
-                .chars()
-                .into_iter()
-                .fold(HashMap::new(), |mut map, letter| {
-                    if let Some(exists) = map.get_mut(&letter) {
-                        *exists += 1;
-                    } else {
-                        map.insert(letter, 1);
-                    }
-                    map
-                });
+            value.chars().fold(HashMap::new(), |mut map, letter| {
+                if let Some(exists) = map.get_mut(&letter) {
+                    *exists += 1;
+                } else {
+                    map.insert(letter, 1);
+                }
+                map
+            });
 
         // let jokers = letter_count.get(&'J').unwrap_or(&0);
         let max = letter_count
@@ -107,17 +102,14 @@ impl PokerHand {
 
     fn parse_part_two(value: String) -> Self {
         let letter_count: HashMap<char, i64> =
-            value
-                .chars()
-                .into_iter()
-                .fold(HashMap::new(), |mut map, letter| {
-                    if let Some(exists) = map.get_mut(&letter) {
-                        *exists += 1;
-                    } else {
-                        map.insert(letter, 1);
-                    }
-                    map
-                });
+            value.chars().fold(HashMap::new(), |mut map, letter| {
+                if let Some(exists) = map.get_mut(&letter) {
+                    *exists += 1;
+                } else {
+                    map.insert(letter, 1);
+                }
+                map
+            });
 
         let jokers = letter_count.get(&'J').unwrap_or(&0);
         let max = letter_count
@@ -190,7 +182,7 @@ impl Solution for Day07 {
         let mut poker_hands: Vec<(PokerHand, i64)> = input_util::read_file_buffered(file_path)
             .flatten()
             .map(|line| {
-                let (hand, bet) = line.split_once(" ").unwrap();
+                let (hand, bet) = line.split_once(' ').unwrap();
                 let bet: i64 = bet.parse().unwrap();
                 (hand.to_owned(), bet)
             })
@@ -208,7 +200,7 @@ impl Solution for Day07 {
         let mut poker_hands: Vec<(PokerHand, i64)> = input_util::read_file_buffered(file_path)
             .flatten()
             .map(|line| {
-                let (hand, bet) = line.split_once(" ").unwrap();
+                let (hand, bet) = line.split_once(' ').unwrap();
                 let bet: i64 = bet.parse().unwrap();
                 (hand.to_owned(), bet)
             })

@@ -6,9 +6,9 @@ impl Solution for Day09 {
     fn part_one(&self, file_path: &str) -> i64 {
         input_util::read_file_buffered(file_path)
             .flatten()
-            .map(|line| {
+            .flat_map(|line| {
                 let numbers: Vec<i64> = line
-                    .split(" ")
+                    .split(' ')
                     .map(|number_string| number_string.parse().unwrap())
                     .collect();
                 let mut degrees: Vec<Vec<i64>> = vec![numbers];
@@ -36,16 +36,15 @@ impl Solution for Day09 {
                 }
                 cursor
             })
-            .flatten()
             .sum()
     }
 
     fn part_two(&self, file_path: &str) -> i64 {
         input_util::read_file_buffered(file_path)
             .flatten()
-            .map(|line| {
+            .flat_map(|line| {
                 let numbers: Vec<i64> = line
-                    .split(" ")
+                    .split(' ')
                     .map(|number_string| number_string.parse().unwrap())
                     .collect();
 
@@ -74,7 +73,6 @@ impl Solution for Day09 {
                 }
                 cursor
             })
-            .flatten()
             .sum()
     }
 }

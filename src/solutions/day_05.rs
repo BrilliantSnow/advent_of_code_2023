@@ -14,39 +14,19 @@ struct Mapper {
 
 impl Mapper {
     pub fn map(&self, input: i64) -> i64 {
-        let oof: Vec<i64> = self
-            .conversion
+        self.conversion
             .iter()
-            .filter(|(from, to, offset)| from.contains(&input))
-            // .find(|(from, to, offset)| from.contains(&input))
-            .map(|(from, to, offset)| input + offset)
-            .collect();
-        // .unwrap_or(input)
-        if oof.len() > 1 {
-            println!("OOF");
-            todo!();
-        } else if oof.len() == 1 {
-            return *oof.first().unwrap();
-        } else {
-            return input;
-        }
+            .find(|(from, _, _)| from.contains(&input))
+            .map(|(_, _, offset)| input + offset)
+            .unwrap_or(input)
     }
 
     pub fn map_backwards(&self, input: i64) -> i64 {
         self.conversion
             .iter()
-            .find(|(from, to, offset)| to.contains(&input))
-            // .find(|(from, to, offset)| from.contains(&input))
-            .map(|(from, to, offset)| input - offset)
+            .find(|(_, to, _)| to.contains(&input))
+            .map(|(_, _, offset)| input - offset)
             .unwrap_or(input)
-        // if oof.len() > 1 {
-        //     println!("OOF");
-        //     todo!();
-        // } else if oof.len() == 1 {
-        //     return *oof.first().unwrap();
-        // } else {
-        //     return input;
-        // }
     }
 }
 
@@ -73,7 +53,6 @@ impl Solution for Day05 {
             .unwrap()
             .1
             .split(' ')
-            .into_iter()
             .map(|digits| digits.parse().unwrap())
             .collect();
 
@@ -98,8 +77,6 @@ impl Solution for Day05 {
             range_mapper.insert(key, Mapper { conversion: values });
         }
 
-        // println!("My maps contents: {:?}", range_mapper.keys());
-
         let conversions_needed = vec![
             "seed",
             "soil",
@@ -115,24 +92,15 @@ impl Solution for Day05 {
             .into_iter()
             .map(|seed_number| {
                 let mut id = seed_number;
-                let mut count = 0;
                 for conversion in conversions_needed.windows(2) {
-                    let from = conversion.get(0).unwrap();
+                    let from = conversion.first().unwrap();
                     let to = conversion.get(1).unwrap();
-                    // println!(
-                    //     "Trying to convert {} to {}",
-                    //     conversions_needed[count],
-                    //     conversions_needed[count + 1]
-                    // );
-                    let old_id = id;
                     id = range_mapper
                         .get(&(*from, *to))
                         .expect("Why no conversion")
                         .map(seed_number);
-                    // println!("{} to {}", old_id, id);
-                    count += 1;
                 }
-                return id;
+                id
             })
             .min()
             .unwrap()
@@ -160,11 +128,10 @@ impl Solution for Day05 {
         let seeds: Vec<Range<i64>> = seed_range_pattern
             .captures_iter(seed_line.split_once(": ").unwrap().1)
             .map(|captures| captures.extract::<2>())
-            .into_iter()
             .map(|(_, [left, right])| {
                 let lower = left.parse().unwrap();
                 let length: i64 = right.parse().unwrap();
-                return lower..lower + length;
+                lower..lower + length
             })
             .collect();
 
@@ -189,8 +156,6 @@ impl Solution for Day05 {
             range_mapper.insert(key, Mapper { conversion: values });
         }
 
-        // println!("My maps contents: {:?}", range_mapper.keys());
-
         let conversions_needed = vec![
             "seed",
             "soil",
@@ -210,31 +175,7 @@ impl Solution for Day05 {
                     id = range_mapper.get(&(from, to)).unwrap().map_backwards(id);
                 });
                 seeds.iter().any(|seed_list| seed_list.contains(&id))
-            }
-            )
+            })
             .expect("Not to run out of locations")
-
-        // seeds
-        //     .into_iter()
-        //     .map(|seed_range: Range<i64>| {
-        //         seed_range
-        //             .into_iter()
-        //             .map(|seed_number| {
-        //                 let mut id = seed_number;
-        //                 for conversion in conversions_needed.windows(2) {
-        //                     let from = conversion.get(0).unwrap();
-        //                     let to = conversion.get(1).unwrap();
-        //                     id = range_mapper
-        //                         .get(&(*from, *to))
-        //                         .expect("Why no conversion")
-        //                         .map(seed_number);
-        //                 }
-        //                 return id;
-        //             })
-        //             .min()
-        //     })
-        //     .flatten()
-        //     .min()
-        //     .unwrap()
     }
 }

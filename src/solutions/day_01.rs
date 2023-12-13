@@ -7,10 +7,10 @@ pub struct Day01;
 
 impl Solution for Day01 {
     fn part_one(&self, input_dir: &str) -> i64 {
-        let first_digit = |x: &char| x.is_digit(10);
+        let first_digit = |x: &char| x.is_ascii_digit();
         let to_digit = |x: char| x.to_digit(10).expect("Already checked if it was a digit");
 
-        input_util::read_file_buffered(&input_dir)
+        input_util::read_file_buffered(input_dir)
             .map(|line_read| {
                 let line = line_read.expect("The input file is parsable");
                 let line_characters = line.chars();
@@ -27,16 +27,16 @@ impl Solution for Day01 {
                     .map(to_digit)
                     .expect("Input line has at least one digit");
                 // product of first and last digits
-                return first as i64 * 10 + last as i64;
+                first as i64 * 10 + last as i64
             })
             .sum()
     }
 
     fn part_two(&self, input_dir: &str) -> i64 {
-        input_util::read_file_buffered(&input_dir)
+        input_util::read_file_buffered(input_dir)
             .map(|line_read| {
                 let line = line_read.expect("The input file is parsable");
-                return Self::find_first_and_last_digits(&line);
+                Self::find_first_and_last_digits(&line)
             })
             .sum()
     }
@@ -79,8 +79,8 @@ impl Day01 {
             first_capture
         };
 
-        return format!("{}{}", first_digit, second_digit)
+        format!("{}{}", first_digit, second_digit)
             .parse()
-            .expect("To be a number");
+            .expect("To be a number")
     }
 }

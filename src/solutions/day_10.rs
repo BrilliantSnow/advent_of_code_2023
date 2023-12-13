@@ -23,23 +23,16 @@ impl Solution for Day10 {
             .iter()
             .flatten()
             .find(|tile| {
-                if let Tile::Start(_, _) = tile {
-                    true
-                } else {
-                    false
-                }
+                matches!(tile, Tile::Start(_, _))
             })
             .unwrap();
         let mut visited: HashSet<Tile> = HashSet::new();
-        let mut pipes: Vec<Tile> = vec![];
         let mut cursors = first_location.starting_pipes(&tile_rows);
         let mut count = 1;
         loop {
             visited.insert(cursors.0);
             visited.insert(cursors.1);
             if cursors.0 == cursors.1 {
-                pipes = visited.iter().copied().collect();
-                // let new_file = []
                 return count;
             }
             cursors.0 = cursors
@@ -75,7 +68,7 @@ impl Tile {
         }
     }
 
-    fn starting_pipes(&self, list: &Vec<Vec<Self>>) -> (Self, Self) {
+    fn starting_pipes(&self, list: &[Vec<Self>]) -> (Self, Self) {
         if let Tile::Start(x, y) = self {
             (list[*y + 1][*x], list[*y - 1][*x])
         } else {
@@ -83,8 +76,8 @@ impl Tile {
         }
     }
 
-    fn next_pipe(&self, list: &Vec<Vec<Self>>, map: &HashSet<Tile>) -> Option<Self> {
-        let find_connections = |x: usize, y: usize| list.get(y).map_or(None, |row| row.get(x));
+    fn next_pipe(&self, list: &[Vec<Self>], map: &HashSet<Tile>) -> Option<Self> {
+        let find_connections = |x: usize, y: usize| list.get(y).and_then(|row| row.get(x));
         match self {
             Tile::Start(_, _) => todo!(),
             Tile::Pipe(x, y, char) => {
@@ -99,14 +92,9 @@ impl Tile {
                 };
                 try_find
                     .into_iter()
-                    .map(|pair| find_connections(*x + pair.0 as usize, *y + pair.1 as usize))
-                    .flatten()
+                    .flat_map(|pair| find_connections(*x + pair.0 as usize, *y + pair.1 as usize))
                     .find(|tile| {
-                        if let None = map.get(tile) {
-                            true
-                        } else {
-                            false
-                        }
+                        matches!(map.get(tile), None)
                     })
                     .copied()
             }

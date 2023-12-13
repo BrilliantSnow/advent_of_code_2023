@@ -10,17 +10,17 @@ impl Solution for Day06 {
             .flatten()
             .collect();
 
-        let time_line = file_string.get(0).unwrap();
+        let time_line = file_string.first().unwrap();
         let distance_line = file_string.get(1).unwrap();
 
         let number_pattern = Regex::new(r"\d+").unwrap();
 
         let times: Vec<i64> = number_pattern
-            .find_iter(&time_line)
+            .find_iter(time_line)
             .map(|found| found.as_str().parse().unwrap())
             .collect();
         let distances: Vec<i64> = number_pattern
-            .find_iter(&distance_line)
+            .find_iter(distance_line)
             .map(|found| found.as_str().parse().unwrap())
             .collect();
 
@@ -42,19 +42,19 @@ impl Solution for Day06 {
             .flatten()
             .collect();
 
-        let time_line = file_string.get(0).unwrap();
+        let time_line = file_string.first().unwrap();
         let distance_line = file_string.get(1).unwrap();
 
         let number_pattern = Regex::new(r"\d+").unwrap();
 
         let time: i64 = number_pattern
-            .find_iter(&time_line)
+            .find_iter(time_line)
             .map(|found| found.as_str())
             .fold("".to_string(), |word, found| format!("{word}{found}"))
             .parse()
             .unwrap();
         let distance: i64 = number_pattern
-            .find_iter(&distance_line)
+            .find_iter(distance_line)
             .map(|found| found.as_str())
             .fold("".to_string(), |word, found| format!("{word}{found}"))
             .parse()

@@ -24,17 +24,15 @@ impl Solution for Day08 {
             .collect();
 
         let mut current_step = "AAA";
-        let mut count = 0;
-        for letter in steps.chars().cycle() {
+        for (count, letter) in steps.chars().cycle().enumerate() {
             if current_step == "ZZZ" {
-                return count;
+                return count as i64;
             }
             current_step = match letter {
                 'L' => nodes.get(current_step).unwrap().0,
                 'R' => nodes.get(current_step).unwrap().1,
                 _ => unreachable!("String is only L and R"),
             };
-            count += 1;
         }
         unreachable!("Steps has at least 1 letter");
     }
@@ -57,11 +55,11 @@ impl Solution for Day08 {
 
         nodes
             .keys()
-            .filter(|key| key.chars().last().unwrap() == 'A')
+            .filter(|key| key.ends_with('A'))
             .map(|&start| {
                 let mut cursor = start;
                 for (index, direction) in steps.chars().cycle().enumerate() {
-                    if cursor.chars().last().unwrap() == 'Z' {
+                    if cursor.ends_with('Z') {
                         return index as i64;
                     }
                     cursor = match direction {
@@ -72,6 +70,6 @@ impl Solution for Day08 {
                 }
                 unreachable!();
             })
-            .fold(1, |cum, cycle| num::integer::lcm(cum, cycle))
+            .fold(1, num::integer::lcm)
     }
 }
